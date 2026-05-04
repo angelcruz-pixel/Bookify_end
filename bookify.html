@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bookify Librería</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy:   #1b3a5c;
+      --steel:  #4d7a99;
+      --caramel:#8b5e3c;
+      --white:  #f5f5f5;
+      --dark:   #1a1a1a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--dark);
+      color: var(--white);
+      font-family: 'Lato', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    /* ── Fondo decorativo ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 30%, rgba(27,58,92,.45) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 70%, rgba(139,94,60,.25) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* líneas horizontales sutiles */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 38px,
+        rgba(77,122,153,.07) 39px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Contenedor principal ── */
+    .card {
+      position: relative;
+      z-index: 1;
+      width: min(560px, 92vw);
+      background: rgba(27,58,92,.12);
+      border: 1px solid rgba(77,122,153,.3);
+      border-radius: 24px;
+      padding: 48px 40px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      backdrop-filter: blur(14px);
+      box-shadow:
+        0 4px 40px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.06);
+      animation: fadeUp .8s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Logo ── */
+    .logo-wrap {
+      animation: fadeUp .8s .1s ease both;
+      background: rgba(27,58,92,.25);
+      border: 1px solid rgba(77,122,153,.45);
+      border-radius: 16px;
+      padding: 16px 32px;
+      backdrop-filter: blur(8px);
+      box-shadow:
+        0 0 0 1px rgba(139,94,60,.2),
+        0 4px 24px rgba(0,0,0,.4),
+        inset 0 1px 0 rgba(255,255,255,.07);
+    }
+    .logo-wrap img {
+      height: 88px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 18px rgba(0,0,0,.8)) drop-shadow(0 0 3px rgba(0,0,0,1));
+      background: transparent;
+    }
+
+    /* ── Separador ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--steel), var(--caramel), transparent);
+      animation: fadeUp .8s .2s ease both;
+    }
+
+    /* ── Texto intro ── */
+    .intro {
+      text-align: center;
+      animation: fadeUp .8s .25s ease both;
+    }
+    .intro h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: .02em;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .intro h1 span { color: var(--steel); }
+    .intro p {
+      font-size: .9rem;
+      font-weight: 300;
+      color: rgba(245,245,245,.65);
+      line-height: 1.6;
+      max-width: 380px;
+    }
+
+    /* ── QR container ── */
+    .qr-wrap {
+      position: relative;
+      animation: fadeUp .8s .35s ease both;
+    }
+
+    /* esquinas decorativas */
+    .qr-wrap::before,
+    .qr-wrap::after,
+    .qr-wrap .corner-br,
+    .qr-wrap .corner-bl {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-color: var(--caramel);
+      border-style: solid;
+    }
+    .qr-wrap::before  { top: -6px;  left: -6px;  border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
+    .qr-wrap::after   { top: -6px;  right: -6px; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
+    .qr-wrap .corner-br { bottom: -6px; right: -6px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
+    .qr-wrap .corner-bl { bottom: -6px; left: -6px;  border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
+
+    .qr-frame {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+    .qr-frame img {
+      display: block;
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+
+    /* ── Texto "Escanee" ── */
+    .scan-label {
+      text-align: center;
+      animation: fadeUp .8s .45s ease both;
+    }
+    .scan-label p {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      letter-spacing: .12em;
+      color: var(--white);
+    }
+    .scan-label span {
+      font-family: 'Lato', sans-serif;
+      font-size: .75rem;
+      font-weight: 300;
+      letter-spacing: .22em;
+      color: var(--steel);
+      text-transform: uppercase;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* ── Chips de features ── */
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      animation: fadeUp .8s .55s ease both;
+    }
+    .chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: .75rem;
+      font-weight: 400;
+      letter-spacing: .04em;
+      border: 1px solid rgba(77,122,153,.3);
+      background: rgba(27,58,92,.2);
+      color: rgba(245,245,245,.75);
+      transition: border-color .25s, background .25s;
+    }
+    .chip:hover {
+      border-color: var(--steel);
+      background: rgba(77,122,153,.18);
+    }
+    .chip .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--caramel);
+    }
+
+    /* ── CTA Button ── */
+    .cta-btn {
+      display: inline-block;
+      padding: 14px 40px;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--steel) 100%);
+      color: var(--white);
+      font-family: 'Lato', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid rgba(77,122,153,.5);
+      box-shadow:
+        0 4px 20px rgba(27,58,92,.5),
+        0 0 0 0 rgba(77,122,153,0);
+      transition: transform .25s, box-shadow .25s, background .25s;
+      animation: fadeUp .8s .6s ease both;
+    }
+    .cta-btn:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, var(--steel) 0%, var(--caramel) 100%);
+      box-shadow:
+        0 8px 28px rgba(27,58,92,.6),
+        0 0 0 6px rgba(77,122,153,.15);
+    }
+    .cta-btn:active {
+      transform: translateY(0);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      font-size: .7rem;
+      font-weight: 300;
+      color: rgba(245,245,245,.3);
+      letter-spacing: .08em;
+      text-align: center;
+      animation: fadeUp .8s .65s ease both;
+    }
+    .footer strong { color: var(--steel); font-weight: 400; }
+
+    /* ── Pulso en el QR ── */
+    .qr-frame {
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 8px 32px rgba(0,0,0,.5), 0 0 0 0 rgba(77,122,153,0); }
+      50%      { box-shadow: 0 8px 32px rgba(0,0,0,.5), 0 0 0 10px rgba(77,122,153,.15); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <img src="logo.png" alt="Bookify Librería" />
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Intro -->
+    <div class="intro">
+      <h1>Tu librería, <span>siempre contigo</span></h1>
+      <p>Descubre miles de títulos físicos y digitales. Compra, reserva y recoge — donde quieras, cuando quieras.</p>
+    </div>
+
+    <!-- QR -->
+    <div class="qr-wrap">
+      <div class="corner-br"></div>
+      <div class="corner-bl"></div>
+      <div class="qr-frame">
+        <img src="qr.png" alt="QR Bookify" />
+      </div>
+    </div>
+
+    <!-- Scan label -->
+    <div class="scan-label">
+      <p>Escanee para acceder a la página</p>
+      <span>Apunte su cámara al código QR</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Chips -->
+    <div class="features">
+      <div class="chip"><span class="dot"></span>Librería Física</div>
+      <div class="chip"><span class="dot"></span>Tienda Online</div>
+      <div class="chip"><span class="dot"></span>Miles de títulos</div>
+      <div class="chip"><span class="dot"></span>Envío a domicilio</div>
+    </div>
+
+    <!-- CTA Button -->
+    <a class="cta-btn" href="https://www.figma.com/proto/hCC0vhEQgOrt4j0XJsGzXQ/Bookify?node-id=52-5&p=f&t=dFSOmad0qQy3qzbw-0&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=52%3A5" target="_blank" rel="noopener">
+      Explorar Bookify &nbsp;→
+    </a>
+
+    <!-- Footer -->
+    <p class="footer"><strong>Bookify Librería</strong> &nbsp;·&nbsp; Donde los libros encuentran su lector</p>
+
+  </div>
+
+</body>
+</html>
